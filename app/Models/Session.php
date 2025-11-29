@@ -11,15 +11,11 @@ class Session extends Model
     protected $fillable = [
         'order_time',
         'reserved_time',
-        'bed_id',
-        'customer_id',
         'payment',
         'date',
         'start',
         'end',
-        'status',
-        'treatment_id',
-        'employee_id'
+        'status'
     ];
 
     protected $guarded = [
@@ -44,5 +40,15 @@ class Session extends Model
     public function bed()
     {
         return $this->belongsTo(Bed::class);
+    }
+
+    public function walkin()
+    {
+        return $this->hasOne(Walkin::class);
+    }
+
+    public function voucher()
+    {
+        return $this->hasOne(Voucher::class);
     }
 }

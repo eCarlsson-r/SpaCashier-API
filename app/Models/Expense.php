@@ -9,7 +9,7 @@ class Expense extends Model
     protected $table = 'expense';
 
     protected $fillable = [
-        'bkk',
+        'reference',
         'date',
         'partner',
         'partner_type',

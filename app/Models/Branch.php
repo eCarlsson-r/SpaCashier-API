@@ -18,8 +18,8 @@ class Branch extends Model
         'description',
         'cash_account',
         'walkin_account',
-        'purchase_voucher_account',
-        'usage_voucher_account',
+        'voucher_purchase_account',
+        'voucher_usage_account',
         'image'
     ];
 

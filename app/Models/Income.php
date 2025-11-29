@@ -9,7 +9,7 @@ class Income extends Model
     protected $table = 'income';
 
     protected $fillable = [
-        'bkm',
+        'reference',
         'date',
         'partner',
         'partner_type',

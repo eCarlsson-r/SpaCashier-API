@@ -12,7 +12,26 @@ class SessionController extends Controller
      */
     public function index(Request $request)
     {
-        return Session::whereIn('status', $request->array('status'))->get();
+        return Session::whereIn('sessions.status', json_decode($request->input('status')))
+            ->join('treatments', 'sessions.treatment_id', '=', 'treatments.id')
+            ->join('customers', 'sessions.customer_id', '=', 'customers.id')
+            ->join('employees', 'sessions.employee_id', '=', 'employees.id')
+            ->join('beds', 'sessions.bed_id', '=', 'beds.id')
+            ->leftJoin('walkin', 'walkin.session_id', '=', 'sessions.id')
+            ->leftJoin('voucher', 'voucher.session_id', '=', 'sessions.id')
+            ->leftJoin('sales', 'sales.id', '=', 'walkin.sales_id')
+            ->leftJoin('income', 'income.id', '=', 'sales.income_id')
+            ->select(
+                'sessions.*',
+                'customers.name AS customer_name', 
+                'treatments.name AS treatment_name', 
+                'treatments.duration AS treatment_duration', 
+                'employees.nickname AS therapist_name', 
+                'beds.name AS bed_name',
+                'walkin.id AS walkin_id',
+                'voucher.id AS voucher_id',
+                'income.reference AS reference'
+            )->get();
     }
 
     /**
