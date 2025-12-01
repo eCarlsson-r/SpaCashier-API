@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BankAccount;
+use App\Models\Transfer;
 use Illuminate\Http\Request;
 
-class BankAccountController extends Controller
+class TransferController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return BankAccount::all();
+        return Transfer::all();
     }
 
     /**
@@ -26,15 +26,15 @@ class BankAccountController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Transfer $transfer)
     {
-        return BankAccount::findOrFail($id);
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, BankAccount $bankAccount)
+    public function update(Request $request, Transfer $transfer)
     {
         //
     }
@@ -42,7 +42,7 @@ class BankAccountController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BankAccount $bankAccount)
+    public function destroy(Transfer $transfer)
     {
         //
     }

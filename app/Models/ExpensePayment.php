@@ -10,7 +10,7 @@ class ExpensePayment extends Model
 
     protected $fillable = [
         'type',
-        'tool',
+        'wallet_id',
         'amount',
         'description'
     ];
@@ -22,5 +22,10 @@ class ExpensePayment extends Model
     public function expense()
     {
         return $this->belongsTo(Expense::class);
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
     }
 }

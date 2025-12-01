@@ -2,9 +2,9 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\BankAccountController;
-use App\Http\Controllers\CashAccountController;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\CompensationController;
 use App\Http\Controllers\CompensationPeriodController;
 use App\Http\Controllers\AgentController;
@@ -31,13 +31,13 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/subscribe', [AuthController::class, 'subscribe']);
-Route::get('/dashboard', [AuthController::class, 'dashboard']);
+Route::get('/dashboard', [DashboardController::class, 'dashboard']);
+Route::get('/daily', [DashboardController::class, 'daily']);
 
 Route::apiResource('income', IncomeController::class);
 Route::apiResource('expense', ExpenseController::class);
 Route::apiResource('account', AccountController::class);
-Route::apiResource('bankacc', BankAccountController::class);
-Route::apiResource('cashacc', CashAccountController::class);
+Route::apiResource('wallet', WalletController::class);
 Route::apiResource('agent', AgentController::class);
 Route::apiResource('bank', BankController::class);
 Route::apiResource('room', RoomController::class);

@@ -22,4 +22,9 @@ class CompensationPeriod extends Model
     {
         return $this->belongsTo(Expense::class);
     }
+
+    public function compensations()
+    {
+        return $this->hasMany(Compensation::class);
+    }
 }

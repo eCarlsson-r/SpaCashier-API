@@ -10,7 +10,7 @@ class IncomePayment extends Model
 
     protected $fillable = [
         'type',
-        'tool',
+        'wallet_id',
         'amount',
         'description'
     ];
@@ -22,5 +22,10 @@ class IncomePayment extends Model
     public function income()
     {
         return $this->belongsTo(Income::class);
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
     }
 }

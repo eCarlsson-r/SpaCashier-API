@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
-    protected $table = 'expense';
+    protected $table = 'expenses';
 
     protected $fillable = [
         'reference',

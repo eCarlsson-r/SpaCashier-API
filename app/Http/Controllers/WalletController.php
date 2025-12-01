@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CashAccount;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
-class CashAccountController extends Controller
+class WalletController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return CashAccount::all();
+        return Wallet::all();
     }
 
     /**
@@ -26,15 +26,15 @@ class CashAccountController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Wallet $wallet)
     {
-        return CashAccount::findOrFail($id);
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CashAccount $cashAccount)
+    public function update(Request $request, Wallet $wallet)
     {
         //
     }
@@ -42,7 +42,7 @@ class CashAccountController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CashAccount $cashAccount)
+    public function destroy(Wallet $wallet)
     {
         //
     }

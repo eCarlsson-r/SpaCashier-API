@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BankAccount extends Model
+class Wallet extends Model
 {
-    protected $table = 'bank_account';
+    protected $table = 'wallets';
     protected $fillable = [
         'name',
-        'gantung',
-        'mesin',
-        'kredit'
+        'bank_account_number',
+        'bank_id',
+        'account_id',
+        'edc_machine'
     ];
 
     protected $guarded = [
