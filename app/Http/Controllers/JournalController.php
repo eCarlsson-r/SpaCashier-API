@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Grade;
+use App\Models\Journal;
 use Illuminate\Http\Request;
 
-class GradeController extends Controller
+class JournalController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return Journal::all();
     }
 
     /**
@@ -26,15 +26,15 @@ class GradeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Grade $grade)
+    public function show(Journal $journal)
     {
-        //
+        return $journal->with('records')->get();
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Grade $grade)
+    public function update(Request $request, Journal $journal)
     {
         //
     }
@@ -42,7 +42,7 @@ class GradeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Grade $grade)
+    public function destroy(Journal $journal)
     {
         //
     }

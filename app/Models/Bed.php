@@ -8,6 +8,7 @@ class Bed extends Model
 {
     protected $table = 'beds';
     public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'name',

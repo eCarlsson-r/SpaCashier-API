@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Compensation extends Model
 {
     protected $table = 'compensations';
+    public $timestamps = false;
+    
     protected $fillable = [
         'employee_id',
         'period_id',

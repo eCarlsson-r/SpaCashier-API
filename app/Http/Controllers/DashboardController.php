@@ -58,16 +58,16 @@ class DashboardController extends Controller
             ->leftJoin('voucher', 'sessions.id', '=', 'voucher.session_id')
             ->leftJoin('walkin', 'sessions.id', '=', 'walkin.session_id')
             ->leftJoin('sales', 'walkin.sales_id', '=', 'sales.id')
-            ->join('grade', function($join) use ($date) {
-                $join->on('sessions.employee_id', '=', 'grade.employee_id')
-                    ->where('grade.start_date', '<=', $date)
+            ->join('grades', function($join) use ($date) {
+                $join->on('sessions.employee_id', '=', 'grades.employee_id')
+                    ->where('grades.start_date', '<=', $date)
                     ->where(function($query) use ($date) {
-                        $query->where('grade.end_date', '>=', $date)
-                            ->orWhereNull('grade.end_date');
+                        $query->where('grades.end_date', '>=', $date)
+                            ->orWhereNull('grades.end_date');
                     });
             })
             ->join('bonus', function($join) {
-                $join->on('grade.grade', '=', 'bonus.grade')
+                $join->on('grades.grade', '=', 'bonus.grade')
                     ->on('bonus.treatment_id', '=', 'sessions.treatment_id');
             })
             ->join('treatments', 'bonus.treatment_id', '=', 'treatments.id')
@@ -80,16 +80,16 @@ class DashboardController extends Controller
             ->leftJoin('voucher', 'sessions.id', '=', 'voucher.session_id')
             ->leftJoin('walkin', 'sessions.id', '=', 'walkin.session_id')
             ->leftJoin('sales', 'walkin.sales_id', '=', 'sales.id')
-            ->join('grade', function($join) use ($date) {
-                $join->on('sessions.employee_id', '=', 'grade.employee_id')
-                    ->where('grade.start_date', '<=', $date)
+            ->join('grades', function($join) use ($date) {
+                $join->on('sessions.employee_id', '=', 'grades.employee_id')
+                    ->where('grades.start_date', '<=', $date)
                     ->where(function($query) use ($date) {
-                        $query->where('grade.end_date', '>=', $date)
-                            ->orWhereNull('grade.end_date');
+                        $query->where('grades.end_date', '>=', $date)
+                            ->orWhereNull('grades.end_date');
                     });
             })
             ->join('bonus', function($join) {
-                $join->on('grade.grade', '=', 'bonus.grade')
+                $join->on('grades.grade', '=', 'bonus.grade')
                     ->on('bonus.treatment_id', '=', 'sessions.treatment_id');
             })
             ->join('treatments', 'bonus.treatment_id', '=', 'treatments.id')
@@ -103,16 +103,16 @@ class DashboardController extends Controller
             ->leftJoin('voucher', 'sessions.id', '=', 'voucher.session_id')
             ->leftJoin('walkin', 'sessions.id', '=', 'walkin.session_id')
             ->leftJoin('sales', 'walkin.sales_id', '=', 'sales.id')
-            ->join('grade', function($join) {
-                $join->on('sessions.employee_id', '=', 'grade.employee_id')
-                    ->whereRaw('grade.start_date <= sessions.date')
+            ->join('grades', function($join) {
+                $join->on('sessions.employee_id', '=', 'grades.employee_id')
+                    ->whereRaw('grades.start_date <= sessions.date')
                     ->where(function($query) {
-                        $query->whereRaw('grade.end_date >= sessions.date')
-                            ->orWhereNull('grade.end_date');
+                        $query->whereRaw('grades.end_date >= sessions.date')
+                            ->orWhereNull('grades.end_date');
                     });
             })
             ->join('bonus', function($join) {
-                $join->on('grade.grade', '=', 'bonus.grade')
+                $join->on('grades.grade', '=', 'bonus.grade')
                     ->on('bonus.treatment_id', '=', 'sessions.treatment_id');
             })
             ->join('treatments', 'bonus.treatment_id', '=', 'treatments.id')
@@ -175,13 +175,13 @@ class DashboardController extends Controller
                 ->value('employees.complete_name'),
             "voucher_sold" => 0,
             "voucher_improve" => 0,
-            "monthly_income" => IncomePayment::join('income', 'income_payments.income_id', '=', 'income.id')
-                ->whereYear('income.date', $profit_year)
-                ->selectRaw('MONTH(income.date) as month, SUM(income_payments.amount) as amount')
+            "monthly_income" => IncomePayment::join('incomes', 'income_payments.income_id', '=', 'incomes.id')
+                ->whereYear('incomes.date', $profit_year)
+                ->selectRaw('MONTH(incomes.date) as month, SUM(income_payments.amount) as amount')
                 ->groupBy('month')->get(),
-            "monthly_expense" => ExpensePayment::join('expense', 'expense_payments.expense_id', '=', 'expense.id')
+            "monthly_expense" => ExpensePayment::join('expenses', 'expense_payments.expense_id', '=', 'expenses.id')
                 ->whereLike('expense_payments.description', 'Profit%')->whereYear('date', $profit_year)
-                ->selectRaw('MONTH(expense.date) as month, SUM(expense_payments.amount) as amount')
+                ->selectRaw('MONTH(expenses.date) as month, SUM(expense_payments.amount) as amount')
                 ->groupBy('month')->get()
         );
 
@@ -233,10 +233,10 @@ class DashboardController extends Controller
             "voucher_sold" => 0,
             "voucher_improve" => 0,
             "monthly_income" => $branch->sales()
-                ->join('income', 'sales.income_id', '=', 'income.id')
-                ->join('income_payments', 'income_payments.income_id', '=', 'income.id')
-                ->selectRaw('MONTH(income.date) as month, SUM(income_payments.amount) as amount')
-                ->whereYear('income.date', $profit_year)
+                ->join('incomes', 'sales.income_id', '=', 'incomes.id')
+                ->join('income_payments', 'income_payments.income_id', '=', 'incomes.id')
+                ->selectRaw('MONTH(incomes.date) as month, SUM(income_payments.amount) as amount')
+                ->whereYear('incomes.date', $profit_year)
                 ->groupBy('month')->get(),
             "uncontacted" => $branch->employee()
                 ->join('sessions', 'employees.id', '=', 'sessions.employee_id')
@@ -414,7 +414,7 @@ class DashboardController extends Controller
         $branch = $request->input("branch");
         $profit_year = $request->input("profit_year");
         
-        $date = date('Y-m-d');
+        $date = ($request->input("job_date")) ? $request->input("job_date") : date('Y-m-d');
         if (isset($employee)) {
             return $this->employee_metadata(Employee::find($employee), $date, $profit_year);
         } else if (isset($branch)) {
@@ -423,5 +423,4 @@ class DashboardController extends Controller
             return $this->admin_metadata($date, $profit_year);
         }
     }
-
 }

@@ -8,6 +8,8 @@ class Bank extends Model
 {
     protected $table = 'bank';
     public $incrementing = false;
+    public $timestamps = false;
+    
     protected $fillable = [
         'name'
     ];

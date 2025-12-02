@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Walkin extends Model
 {
     protected $table = 'walkin';
+    public $timestamps = false;
 
     protected $fillable = [
         'treatment_id',

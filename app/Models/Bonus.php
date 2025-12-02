@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Bonus extends Model
 {
     protected $table = 'bonus';
+    public $timestamps = false;
+    
     protected $fillable = [
         'grade',
         'treatment_id',

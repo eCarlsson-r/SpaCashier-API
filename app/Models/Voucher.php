@@ -8,6 +8,7 @@ class Voucher extends Model
 {
     protected $table = 'voucher';
     protected $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'register_date',

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ExpenseItem extends Model
 {
     protected $table = 'expense_items';
+    public $timestamps = false;
 
     protected $fillable = [
         'amount',

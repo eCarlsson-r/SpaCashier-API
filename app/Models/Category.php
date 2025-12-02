@@ -8,6 +8,7 @@ class Category extends Model
 {
     protected $table = 'categories';
     public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'name',

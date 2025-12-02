@@ -8,6 +8,7 @@ class Room extends Model
 {
     protected $table = 'rooms';
     public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'name',

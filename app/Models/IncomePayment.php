@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class IncomePayment extends Model
 {
     protected $table = 'income_payments';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'type',
         'wallet_id',

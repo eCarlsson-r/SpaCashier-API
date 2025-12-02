@@ -20,7 +20,7 @@ class SessionController extends Controller
             ->leftJoin('walkin', 'walkin.session_id', '=', 'sessions.id')
             ->leftJoin('voucher', 'voucher.session_id', '=', 'sessions.id')
             ->leftJoin('sales', 'sales.id', '=', 'walkin.sales_id')
-            ->leftJoin('income', 'income.id', '=', 'sales.income_id')
+            ->leftJoin('incomes', 'incomes.id', '=', 'sales.income_id')
             ->select(
                 'sessions.*',
                 'customers.name AS customer_name', 
@@ -30,7 +30,7 @@ class SessionController extends Controller
                 'beds.name AS bed_name',
                 'walkin.id AS walkin_id',
                 'voucher.id AS voucher_id',
-                'income.reference AS reference'
+                'incomes.reference AS reference'
             )->get();
     }
 

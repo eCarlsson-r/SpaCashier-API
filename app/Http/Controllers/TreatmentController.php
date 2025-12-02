@@ -15,11 +15,11 @@ class TreatmentController extends Controller
         $query = Treatment::query();
 
         $query->when(request()->has('id'), function ($query) {
-            return $query->where('id', request('id'));
+            return $query->with('category')->where('id', request('id'));
         });
 
         $query->when(request()->has('active_only'), function ($query) {
-            return $query->whereColumn('applicable_time_start', '<>', 'applicable_time_end');
+            return $query->with('category')->whereColumn('applicable_time_start', '<>', 'applicable_time_end');
         });
 
         return $query->with('category')->get();
@@ -38,7 +38,7 @@ class TreatmentController extends Controller
      */
     public function show(string $id)
     {
-        return Treatment::findOrFail($id);
+        return Treatment::with('category')->findOrFail($id);
     }
 
     /**

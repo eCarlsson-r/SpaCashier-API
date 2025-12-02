@@ -8,6 +8,7 @@ use Carbon\Carbon;
 class Attendance extends Model
 {
     protected $table = 'attendance';
+    public $timestamps = false;
 
     protected $fillable = [
         'employee_id',

@@ -8,6 +8,7 @@ class Branch extends Model
 {
     protected $table = 'branches';
     public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'name',

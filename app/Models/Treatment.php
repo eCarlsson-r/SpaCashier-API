@@ -8,6 +8,7 @@ class Treatment extends Model
 {
     protected $table = 'treatments';
     public $incrementing = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'name',

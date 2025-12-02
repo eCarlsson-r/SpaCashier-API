@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Expense extends Model
 {
     protected $table = 'expenses';
+    public $timestamps = false;
 
     protected $fillable = [
-        'reference',
+        'journal_reference',
         'date',
         'partner',
         'partner_type',
@@ -19,6 +20,11 @@ class Expense extends Model
     protected $guarded = [
         'id'
     ];
+
+    public function journal()
+    {
+        return $this->belongsTo(Journal::class, 'journal_reference', 'reference');
+    }
 
     public function items()
     {

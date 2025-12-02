@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SalesRecord extends Model
 {
     protected $table = 'sales_records';
+    public $timestamps = false;
 
     protected $fillable = [
         'quantity',

@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class IncomeItem extends Model
 {
     protected $table = 'income_items';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'type',
         'transaction',

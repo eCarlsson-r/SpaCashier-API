@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Wallet extends Model
 {
     protected $table = 'wallets';
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
         'bank_account_number',

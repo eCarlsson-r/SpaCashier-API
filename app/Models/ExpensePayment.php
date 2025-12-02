@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ExpensePayment extends Model
 {
     protected $table = 'expense_payments';
+    public $timestamps = false;
 
     protected $fillable = [
         'type',

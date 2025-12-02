@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CompensationPeriod extends Model
 {
     protected $table = 'periods';
+    public $timestamps = false;
 
     protected $fillable = [
         'expense_id',

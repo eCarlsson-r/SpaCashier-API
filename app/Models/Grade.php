@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Grade extends Model
 {
     protected $table = 'grades';
+    public $timestamps = false;
+    
     protected $fillable = [
         'grade',
         'start_date',
