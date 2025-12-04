@@ -44,6 +44,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        if ($category->delete()) {
+            return response()->json(['message' => 'Category deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete category'], 500);
+        }
     }
 }

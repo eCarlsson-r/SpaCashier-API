@@ -44,6 +44,10 @@ class AccountController extends Controller
      */
     public function destroy(Account $account)
     {
-        //
+        if ($account->delete()) {
+            return response()->json(['message' => 'Account deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete account'], 500);
+        }
     }
 }

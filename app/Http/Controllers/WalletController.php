@@ -44,6 +44,10 @@ class WalletController extends Controller
      */
     public function destroy(Wallet $wallet)
     {
-        //
+        if ($wallet->delete()) {
+            return response()->json(['message' => 'Wallet deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete wallet'], 500);
+        }
     }
 }

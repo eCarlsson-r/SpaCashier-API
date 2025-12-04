@@ -44,6 +44,10 @@ class IncomeController extends Controller
      */
     public function destroy(Income $income)
     {
-        //
+        if ($income->delete()) {
+            return response()->json(['message' => 'Income deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete income'], 500);
+        }
     }
 }

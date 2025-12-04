@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Compensation;
+use App\Models\CompensationPeriod;
 use Illuminate\Http\Request;
 
 class CompensationController extends Controller
@@ -10,9 +11,9 @@ class CompensationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Compensation::all();
+        return Compensation::where('period_id', $request->input('period_id'))->get();
     }
 
     /**
@@ -42,8 +43,12 @@ class CompensationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Compensation $compensation)
+    public function destroy(Request $request)
     {
-        //
+        if (Compensation::where('period_id', $request->input('period_id'))->delete()) {
+            return response()->json(['message' => 'Compensation deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete compensation'], 500);
+        }
     }
 }

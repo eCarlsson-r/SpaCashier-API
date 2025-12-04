@@ -44,6 +44,10 @@ class BranchController extends Controller
      */
     public function destroy(Branch $branch)
     {
-        //
+        if ($branch->delete()) {
+            return response()->json(['message' => 'Branch deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete branch'], 500);
+        }
     }
 }

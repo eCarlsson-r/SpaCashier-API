@@ -44,6 +44,10 @@ class CompensationPeriodController extends Controller
      */
     public function destroy(CompensationPeriod $compensationPeriod)
     {
-        //
+        if ($compensationPeriod->delete()) {
+            return response()->json(['message' => 'Compensation period deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete compensation period'], 500);
+        }
     }
 }

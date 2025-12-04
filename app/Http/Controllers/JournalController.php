@@ -44,6 +44,10 @@ class JournalController extends Controller
      */
     public function destroy(Journal $journal)
     {
-        //
+        if ($journal->delete()) {
+            return response()->json(['message' => 'Journal deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete journal'], 500);
+        }
     }
 }

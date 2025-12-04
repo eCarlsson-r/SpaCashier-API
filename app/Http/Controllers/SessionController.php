@@ -63,6 +63,10 @@ class SessionController extends Controller
      */
     public function destroy(Session $session)
     {
-        //
+        if ($session->delete()) {
+            return response()->json(['message' => 'Session deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete session'], 500);
+        }
     }
 }

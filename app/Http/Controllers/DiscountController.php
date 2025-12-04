@@ -44,6 +44,10 @@ class DiscountController extends Controller
      */
     public function destroy(Discount $discount)
     {
-        //
+        if ($discount->delete()) {
+            return response()->json(['message' => 'Discount deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete discount'], 500);
+        }
     }
 }

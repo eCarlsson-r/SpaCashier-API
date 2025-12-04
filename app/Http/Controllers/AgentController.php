@@ -44,6 +44,10 @@ class AgentController extends Controller
      */
     public function destroy(Agent $agent)
     {
-        //
+        if ($agent->delete()) {
+            return response()->json(['message' => 'Agent deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete agent'], 500);
+        }
     }
 }

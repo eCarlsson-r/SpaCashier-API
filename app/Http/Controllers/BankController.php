@@ -44,6 +44,10 @@ class BankController extends Controller
      */
     public function destroy(Bank $bank)
     {
-        //
+        if ($bank->delete()) {
+            return response()->json(['message' => 'Bank deleted successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Failed to delete bank'], 500);
+        }
     }
 }
