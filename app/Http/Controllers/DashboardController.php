@@ -180,7 +180,7 @@ class DashboardController extends Controller
                 ->selectRaw('MONTH(incomes.date) as month, SUM(income_payments.amount) as amount')
                 ->groupBy('month')->get(),
             "monthly_expense" => ExpensePayment::join('expenses', 'expense_payments.expense_id', '=', 'expenses.id')
-                ->whereLike('expense_payments.description', 'Profit%')->whereYear('date', $profit_year)
+                ->whereNotLike('expense_payments.description', 'Profit%')->whereYear('expenses.date', $profit_year)
                 ->selectRaw('MONTH(expenses.date) as month, SUM(expense_payments.amount) as amount')
                 ->groupBy('month')->get()
         );

@@ -49,10 +49,11 @@ class RoomController extends Controller
 
         $room->bed()->createMany($request->beds);
 
-        return response()->json([
-            'message' => 'Room created successfully',
-            'room' => $room,
-        ], 201);
+        if ($room) {
+            return response()->json($room, 201);
+        } else {
+            return response()->json(['message' => 'Failed to create room'], 500);
+        }
     }
 
     /**
@@ -75,22 +76,15 @@ class RoomController extends Controller
             'beds.*.name' => 'required|string|max:255'
         ]);
 
-        $room->update([
+        if ($room->update([
             'name' => $request->name,
             'branch_id' => $request->branch_id,
             'description' => $request->description,
-        ]);
-
-        foreach ($request->beds as $bed) {
-            Bed::updateOrCreate([
-                'id' => $bed['id'],
-            ], $bed);
+        ])) {
+            return response()->json($room, 200);
+        } else {
+            return response()->json(['message' => 'Failed to update room'], 500);
         }
-
-        return response()->json([
-            'message' => 'Room updated successfully',
-            'room' => $room,
-        ], 200);
     }
 
     /**

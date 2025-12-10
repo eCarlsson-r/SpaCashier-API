@@ -29,7 +29,17 @@ class BedController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $bed = Bed::create([
+            'name' => $request->name,
+            'room_id' => $request->room_id,
+            'description' => $request->description
+        ]);
+
+        if ($bed) {
+            return response()->json($bed, 200);
+        } else {
+            return response()->json(['message' => 'Failed to create bed'], 500);
+        }
     }
 
     /**
@@ -45,7 +55,14 @@ class BedController extends Controller
      */
     public function update(Request $request, Bed $bed)
     {
-        //
+        if ($bed->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ])) {
+            return response()->json($branch, 200);
+        } else {
+            return response()->json(['message' => 'Failed to update branch'], 500);
+        }
     }
 
     /**

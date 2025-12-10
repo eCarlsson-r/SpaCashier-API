@@ -22,7 +22,33 @@ class VoucherController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $treatment = $request->input("treatment");
+        $voucherStart = $request->input("start");
+        $start = (int)explode($treatment, $voucherStart)[1];
+        $voucherEnd = $request->input("end");
+        $end = (int)explode($treatment, $voucherEnd)[1];
+        $date = date("Y-m-d");
+        $time = date("H:i:s");
+        $connection = connectToDB();
+        $treatmentInfo = Treatment::where("id", $treatment)->first();
+        $existingVouchers = Voucher::whereIn("id", [$voucherStart, $voucherEnd])->get();
+        
+        if ($existingVouchers->count() > 0) {
+            return response()->json($existingVouchers, 200);
+        } else {
+            $vouchers = array();
+            for ($i=$start; $i <= $end; $i++) {
+                $voucherCode = $treatment.sprintf('%06d', $i);
+                array_push($vouchers, [
+                    "id" => $voucherCode,
+                    "treatment_id" => $treatment,
+                    "register_date" => $date,
+                    "register_time" => $time,
+                ]);
+            }
+            $voucher = Voucher::createMany($vouchers);
+            return response()->json($voucher, 201);
+        }
     }
 
     /**

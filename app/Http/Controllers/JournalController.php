@@ -20,7 +20,15 @@ class JournalController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $journal = Journal::create($request->all());
+
+        $journal->records()->createMany($request->records);
+
+        if ($journal) {
+            return response()->json($journal, 201);
+        } else {
+            return response()->json(['message' => 'Failed to create journal'], 500);
+        }
     }
 
     /**
@@ -28,7 +36,7 @@ class JournalController extends Controller
      */
     public function show(Journal $journal)
     {
-        return $journal->with('records')->get();
+        return $journal;
     }
 
     /**

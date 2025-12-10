@@ -20,7 +20,13 @@ class IncomeItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $incomeItem = IncomeItem::create($request->all());
+
+        if ($incomeItem) {
+            return response()->json($incomeItem, 200);
+        } else {
+            return response()->json(['message' => 'Failed to create income item'], 500);
+        }
     }
 
     /**

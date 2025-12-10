@@ -20,7 +20,13 @@ class ExpensePaymentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $expensePayment = ExpensePayment::create($request->all());
+
+        if ($expensePayment) {
+            return response()->json($expensePayment, 200);
+        } else {
+            return response()->json(['message' => 'Failed to create expense payment'], 500);
+        }
     }
 
     /**

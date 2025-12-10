@@ -35,11 +35,33 @@ class ExpenseController extends Controller
             'date' => $request->date,
             'description' => $request->description,
             'partner_type' => $request->partner_type,
-            'partner' => $request->partner
+            'partner' => $request->input("partner_".$request->partner_type)
         ]);
 
         $expense->items()->createMany($request->items);
         $expense->payments()->createMany($request->payments);
+
+        $journal = Journal::create([
+            'reference' => $reference,
+            'date' => $request->date,
+            'description' => $request->description
+        ]);
+
+        foreach($request->items as $item) {
+            $journal->records()->create([
+                'account_id' => $item['account_id'],
+                'debit' => $item['amount'],
+                'credit' => 0
+            ]);
+        }
+
+        foreach($request->payments as $payment) {
+            $journal->records()->create([
+                'account_id' => Wallet::find($payment['wallet_id'])->account_id,
+                'debit' => 0,
+                'credit' => $payment['amount']
+            ]);
+        }
 
         if ($expense) {
             return response()->json($expense, 201);
@@ -61,7 +83,18 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, Expense $expense)
     {
-        //
+        $expense->update([
+            'date' => $request->date,
+            'description' => $request->description,
+            'partner_type' => $request->partner_type,
+            'partner' => $request->input("partner_".$request->partner_type)
+        ]);
+
+        if ($expense) {
+            return response()->json($expense, 200);
+        } else {
+            return response()->json(['message' => 'Failed to update expense'], 500);
+        }
     }
 
     /**

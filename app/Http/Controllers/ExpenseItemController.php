@@ -20,7 +20,13 @@ class ExpenseItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $expenseItem = ExpenseItem::create($request->all());
+
+        if ($expenseItem) {
+            return response()->json($expenseItem, 200);
+        } else {
+            return response()->json(['message' => 'Failed to create expense item'], 500);
+        }
     }
 
     /**

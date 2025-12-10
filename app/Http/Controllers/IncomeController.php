@@ -35,11 +35,33 @@ class IncomeController extends Controller
             'date' => $request->date,
             'description' => $request->description,
             'partner_type' => $request->partner_type,
-            'partner' => $request->partner
+            'partner' => $request->input("partner_".$request->partner_type)
         ]);
 
         $income->items()->createMany($request->items);
         $income->payments()->createMany($request->payments);
+
+        $journal = Journal::create([
+            'reference' => $reference,
+            'date' => $request->date,
+            'description' => $request->description
+        ]);
+
+        foreach($request->items as $item) {
+            $journal->records()->create([
+                'account_id' => $item['account_id'],
+                'debit' => $item['amount'],
+                'credit' => 0
+            ]);
+        }
+
+        foreach($request->payments as $payment) {
+            $journal->records()->create([
+                'account_id' => Wallet::find($payment['wallet_id'])->account_id,
+                'debit' => 0,
+                'credit' => $payment['amount']
+            ]);
+        }
 
         if ($income) {
             return response()->json($income, 201);
@@ -65,14 +87,8 @@ class IncomeController extends Controller
             'date' => $request->date,
             'description' => $request->description,
             'partner_type' => $request->partner_type,
-            'partner' => $request->partner
+            'partner' => $request->input("partner_".$request->partner_type)
         ]);
-
-        $income->items()->delete();
-        $income->payments()->delete();
-
-        $income->items()->createMany($request->items);
-        $income->payments()->createMany($request->payments);
 
         if ($income) {
             return response()->json($income, 200);

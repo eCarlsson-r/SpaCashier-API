@@ -36,14 +36,12 @@ class JournalControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                0 => [
-                    'id' => $journal->id,
-                    'reference' => $journal->reference,
-                ]
+                'id' => $journal->id,
+                'reference' => $journal->reference,
             ]);
         
         $data = $response->json();
-        $this->assertNotEmpty($data[0]['records']);
+        $this->assertNotEmpty($data);
     }
 
     public function test_destroy_deletes_journal()

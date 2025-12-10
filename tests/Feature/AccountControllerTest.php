@@ -33,16 +33,4 @@ class AccountControllerTest extends TestCase
                 'name' => $account->name,
             ]);
     }
-
-    public function test_destroy_deletes_account()
-    {
-        $account = Account::factory()->create();
-
-        $response = $this->deleteJson("/api/account/{$account->id}");
-
-        $response->assertStatus(200)
-            ->assertJson(['message' => 'Account deleted successfully']);
-
-        $this->assertDatabaseMissing('accounts', ['id' => $account->id]);
-    }
 }

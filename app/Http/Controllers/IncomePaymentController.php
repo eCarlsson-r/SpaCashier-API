@@ -20,7 +20,13 @@ class IncomePaymentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $incomePayment = IncomePayment::create($request->all());
+
+        if ($incomePayment) {
+            return response()->json($incomePayment, 200);
+        } else {
+            return response()->json(['message' => 'Failed to create income payment'], 500);
+        }
     }
 
     /**
