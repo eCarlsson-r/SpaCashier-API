@@ -7,6 +7,7 @@ use App\Models\Walkin;
 use App\Models\Treatment;
 use App\Models\Customer;
 use App\Models\Session;
+use App\Models\Sales;
 
 class WalkinFactory extends Factory
 {
@@ -18,6 +19,7 @@ class WalkinFactory extends Factory
             'treatment_id' => Treatment::factory(),
             'customer_id' => Customer::factory(),
             'session_id' => Session::factory(),
+            'sales_id' => Sales::factory(),
         ];
     }
 }

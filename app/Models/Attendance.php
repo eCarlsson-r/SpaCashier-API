@@ -7,6 +7,7 @@ use Carbon\Carbon;
 
 class Attendance extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $table = 'attendance';
     public $timestamps = false;
 

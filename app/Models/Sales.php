@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sales extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $table = 'sales';
     public $timestamps = false;
 

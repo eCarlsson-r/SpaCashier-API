@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Grade extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $table = 'grades';
     public $timestamps = false;
     
