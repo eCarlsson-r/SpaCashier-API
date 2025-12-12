@@ -12,15 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sales', function (Blueprint $table) {
-            $table->integer('id', true);
+            $table->id();
             $table->string('branch_id', 5);
-            $table->integer('customer_id');
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnUpdate()->cascadeOnDelete();
             $table->date('date');
             $table->time('time');
-            $table->tinyInteger('discount')->default(0);
+            $table->integer('subtotal');
+            $table->integer('discount')->default(0);
+            $table->integer('rounding')->default(0);
             $table->integer('total');
-            $table->integer('income_id')->default(0);
-            $table->integer('employee_id')->nullable();
+            $table->foreignId('income_id')->nullable()->constrained('incomes')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('employee_id')->constrained('employees')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

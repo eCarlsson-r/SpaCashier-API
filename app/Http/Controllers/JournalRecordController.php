@@ -12,7 +12,7 @@ class JournalRecordController extends Controller
      */
     public function index(Request $request)
     {
-        return JournalRecord::where('journal_id', $request->journal_id)->get();
+        return JournalRecord::with('account')->where('journal_id', $request->journal_id)->get();
     }
 
     /**

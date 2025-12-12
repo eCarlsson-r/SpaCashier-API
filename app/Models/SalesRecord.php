@@ -10,6 +10,7 @@ class SalesRecord extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'treatment_id',
         'quantity',
         'price',
         'discount',

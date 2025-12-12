@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sales_records', function (Blueprint $table) {
-            $table->integer('id', true);
-            $table->integer('sales_id')->index('sales-id');
+            $table->id();
+            $table->foreignId('sales_id')->constrained('sales')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('treatment_id', 5);
             $table->integer('quantity');
             $table->integer('price');
@@ -23,8 +23,6 @@ return new class extends Migration
             $table->string('voucher_end', 10)->default('');
             $table->integer('total_price');
             $table->string('description', 500);
-
-            $table->foreign(['sales_id'], 'sales_records_ibfk_1')->references(['id'])->on('sales')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

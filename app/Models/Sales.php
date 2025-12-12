@@ -15,7 +15,9 @@ class Sales extends Model
         'customer_id',
         'date', 
         'time', 
+        'subtotal',
         'discount', 
+        'rounding', 
         'total',
         'income_id',
         'employee_id'

@@ -20,6 +20,7 @@ class Agent extends Model
         'mobile',
         'discount',
         'commission',
+        'liability_account'
     ];
 
     protected $guarded = [
