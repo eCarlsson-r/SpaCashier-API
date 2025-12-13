@@ -52,11 +52,12 @@ class SessionController extends Controller
         $startDate = explode("T", $request->start);
 
         $session = Session::create([
+            'order_time' => date('H:i:s'),
             'bed_id' => $request->bed_id,
             'customer_id' => $request->customer_id,
             'payment' => $request->payment,
-            'date' => $startDate[0],
-            'start' => $startDate[1],
+            'date' => (isset($request->start)) ? $startDate[0] : null,
+            'start' => (isset($request->start)) ? $startDate[1] : null,
             'employee_id' => $request->employee_id,
             'treatment_id' => $request->treatment_id,
             'status' => (isset($request->start)) ? 'ongoing' : 'waiting'
@@ -67,6 +68,17 @@ class SessionController extends Controller
                 ['id' => $request->voucher_id],
                 ['session_id' => $session->id]
             );
+
+            $voucher = Voucher::find($request->voucher_id);
+
+            $journal = Journal::where('reference', $voucher->sales->income->journal_reference)->first();
+
+            $journal->records()->create([
+                "account_id" => $voucher->sales->branch->voucher_usage_account,
+                "debit" => $voucher->amount,
+                "credit" => 0,
+                "description" => "Treat Sess [{$session->id}, {$session->customer->name}, Voucher No. {$request->voucher_id}]"
+            ]);
         } else {
             $updateWalkin = Walkin::updateOrCreate(
                 ['id' => $request->walkin_id],

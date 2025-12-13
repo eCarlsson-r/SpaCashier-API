@@ -12,7 +12,7 @@ class CategoryFactory extends Factory
     public function definition()
     {
         return [
-            'id' => $this->faker->randomLetter(),
+            'id' => $this->faker->unique()->randomLetter(),
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
             'i18n' => 'en',

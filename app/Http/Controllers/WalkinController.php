@@ -12,7 +12,7 @@ class WalkinController extends Controller
      */
     public function index()
     {
-        return Walkin::where('session_id', '0')->get();
+        return Walkin::with('customer')->with('treatment')->where('session_id', '0')->get();
     }
 
     /**

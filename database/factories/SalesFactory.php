@@ -20,7 +20,9 @@ class SalesFactory extends Factory
             'employee_id' => Employee::factory(),
             'date' => $this->faker->date(),
             'time' => $this->faker->time(),
+            'subtotal' => $this->faker->numberBetween(100000, 500000),
             'discount' => 0,
+            'rounding' => 0,
             'total' => $this->faker->numberBetween(100000, 500000),
         ];
     }
