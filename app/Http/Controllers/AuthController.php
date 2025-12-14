@@ -17,8 +17,9 @@ class AuthController extends Controller
         $employee = Employee::where('user_id', $user->id)->first();
 
         if (auth()->attempt($credentials)) {
-            if ($employee) return response()->json(['data' => $user, 'employee' => $employee], 200);
-            else return response()->json(['data' => $user], 200);
+            $token = auth()->user()->createToken('pos-token')->plainTextToken;
+            if ($employee) return response()->json(['data' => $user, 'employee' => $employee, 'token' => $token], 200);
+            else return response()->json(['data' => $user, 'token' => $token], 200);
         } else if (!$user) {
             return response()->json(['message' => 'No account exist with the given username.'], 401);
         } else if (!Hash::check($request->password, $user->password)) {
@@ -26,6 +27,11 @@ class AuthController extends Controller
         } else {
             return response()->json(['message' => 'Username or Password is invalid'], 401);
         }
+    }
+
+    public function logout(Request $request) {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out of the system.'], 200);
     }
 
     public function subscribe(Request $request)

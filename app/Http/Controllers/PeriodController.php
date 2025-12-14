@@ -34,9 +34,19 @@ class PeriodController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Period $period)
+    public function update(Request $request)
     {
-        //
+        $period = Period::create([
+            "id" => $request->id,
+            "start" => $request->start,
+            "end" => $request->end
+        ]);
+        
+        if ($period) {
+            return response()->json($period, 201);
+        } else {
+            return response()->json(['message' => 'Failed to create period'], 500);
+        }
     }
 
     /**

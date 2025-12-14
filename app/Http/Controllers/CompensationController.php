@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Compensation;
-use App\Models\CompensationPeriod;
+use App\Services\CompensationService;
 use Illuminate\Http\Request;
 
 class CompensationController extends Controller
@@ -13,7 +13,18 @@ class CompensationController extends Controller
      */
     public function index(Request $request)
     {
-        return Compensation::with('employee')->where('period_id', $request->input('period_id'))->get();
+        $compensation = Compensation::with('employee')->where('period_id', $request->input('period_id'))->get();
+        
+        if ($compensation->isNotEmpty()) {
+            return response()->json($compensation, 200);
+        } else if ($request->start && $request->end) {
+            // Calculate compensation on-the-fly if not stored yet
+            $service = new CompensationService($request->start, $request->end);
+            $calculated = $service->calculate();
+            return response()->json($calculated, 200);
+        } else {
+            return response()->json([], 200);
+        }
     }
 
     /**
@@ -21,7 +32,28 @@ class CompensationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'period_id' => 'required|exists:periods,id',
+            'start' => 'required|date',
+            'end' => 'required|date|after_or_equal:start',
+        ]);
+
+        foreach ($request->compensations as $comp) {
+            Compensation::create([
+                'employee_id' => $comp['employee_id'],
+                'period_id' => $request->period_id,
+                'base_salary' => $comp['base_salary'],
+                'therapist_bonus' => $comp['therapist_bonus'],
+                'recruit_bonus' => $comp['recruit_bonus'],
+                'addition' => $comp['addition'],
+                'addition_description' => $comp['addition_description'],
+                'deduction' => $comp['deduction'],
+                'deduction_description' => $comp['deduction_description'],
+                'total' => $comp['total'],
+            ]);
+        }
+
+        return response()->json(['message' => 'Compensation calculated and stored successfully'], 201);
     }
 
     /**
