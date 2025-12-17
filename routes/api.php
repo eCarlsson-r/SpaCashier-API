@@ -38,7 +38,7 @@ use App\Http\Controllers\WalkinController;
 use App\Http\Controllers\WalletController;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return $request->user()->load('employee');
 })->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login']);
