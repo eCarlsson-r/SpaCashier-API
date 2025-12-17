@@ -18,12 +18,12 @@ return new class extends Migration
             $table->string('city', 50);
             $table->string('country', 50);
             $table->string('phone', 50);
-            $table->string('description', 1000);
+            $table->string('description', 1000)->nullable();
             $table->string('cash_account', 6)->nullable();
             $table->string('walkin_account', 6)->nullable();
             $table->string('voucher_purchase_account', 6)->nullable();
             $table->string('voucher_usage_account', 6)->nullable();
-            $table->foreignId('branch_img')->nullable()->constrained('files')->nullOnDelete();
+            $table->text('branch_img');
         });
     }
 

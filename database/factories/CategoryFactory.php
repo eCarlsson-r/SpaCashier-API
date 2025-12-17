@@ -16,10 +16,10 @@ class CategoryFactory extends Factory
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
             'i18n' => 'en',
-            'header_img' => 'default.jpg',
-            'body_img1' => 'default.jpg',
-            'body_img2' => 'default.jpg',
-            'body_img3' => 'default.jpg',
+            'header_img' => $this->faker->imageUrl(),
+            'body_img1' => $this->faker->imageUrl(),
+            'body_img2' => $this->faker->imageUrl(),
+            'body_img3' => $this->faker->imageUrl(),
         ];
     }
 }

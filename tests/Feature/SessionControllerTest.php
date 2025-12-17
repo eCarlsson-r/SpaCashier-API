@@ -10,7 +10,6 @@ use App\Models\Treatment;
 use App\Models\Voucher;
 use App\Models\Walkin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class SessionControllerTest extends TestCase
@@ -23,7 +22,6 @@ class SessionControllerTest extends TestCase
         $this->authenticate();
     }
 
-    /** @test */
     public function it_can_create_a_session()
     {
         $session = Session::factory()->create();
@@ -33,7 +31,6 @@ class SessionControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
     public function it_belongs_to_a_customer()
     {
         $customer = Customer::factory()->create();
@@ -42,7 +39,6 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->customer->is($customer));
     }
 
-    /** @test */
     public function it_belongs_to_an_employee()
     {
         $employee = Employee::factory()->create();
@@ -51,7 +47,6 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->employee->is($employee));
     }
 
-    /** @test */
     public function it_belongs_to_a_treatment()
     {
         $treatment = Treatment::factory()->create();
@@ -60,7 +55,6 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->treatment->is($treatment));
     }
 
-    /** @test */
     public function it_belongs_to_a_bed()
     {
         $bed = Bed::factory()->create();
@@ -69,7 +63,6 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->bed->is($bed));
     }
 
-    /** @test */
     public function it_has_one_walkin()
     {
         $session = Session::factory()->create();
@@ -78,7 +71,6 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->walkin->is($walkin));
     }
 
-    /** @test */
     public function it_has_one_voucher()
     {
         $session = Session::factory()->create();

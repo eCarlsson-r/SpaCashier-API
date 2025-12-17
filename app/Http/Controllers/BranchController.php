@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BranchController extends Controller
 {
@@ -20,7 +21,17 @@ class BranchController extends Controller
      */
     public function store(Request $request)
     {
-        $branch = Branch::create($request->all());
+        $createData = $request->all();
+        if ($request->hasFile('branch_img') && $request->file('branch_img')->isValid()) {
+            $path = $request->file('branch_img')->storePubliclyAs(
+                'images', 
+                $request->file('branch_img')->getClientOriginalName(), 
+                'public'
+            );
+            $createData['branch_img'] = Storage::url($path);
+        }
+
+        $branch = Branch::create($createData);
         
         if ($branch) {
             return response()->json($branch, 201);
@@ -42,7 +53,18 @@ class BranchController extends Controller
      */
     public function update(Request $request, Branch $branch)
     {
-        if ($branch->update($request->all())) {
+        $updateData = $request->all();
+        if ($request->hasFile('branch_img') && $request->file('branch_img')->isValid()) {
+            $path = $request->file('branch_img')->storePubliclyAs(
+                'images', 
+                $request->file('branch_img')->getClientOriginalName(), 
+                'public'
+            );
+
+            $updateData['branch_img'] = Storage::url($path);
+        }
+
+        if ($branch->update($updateData)) {
             return response()->json($branch, 200);
         } else {
             return response()->json(['message' => 'Failed to update branch'], 500);
