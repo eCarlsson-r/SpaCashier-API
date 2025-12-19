@@ -25,7 +25,9 @@ class Treatment extends Model
         'applicable_time_end',
         'voucher_normal_quantity',
         'voucher_purchase_quantity',
-        'minimum_quantity'
+        'minimum_quantity',
+        'body_img',
+        'icon_img'
     ];
 
     protected $guarded = [

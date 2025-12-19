@@ -25,8 +25,10 @@ return new class extends Migration
             $table->integer('minimum_quantity');
             $table->integer('voucher_normal_quantity')->nullable();
             $table->integer('voucher_purchase_quantity')->nullable();
+            $table->text('body_img');
+            $table->text('icon_img');
 
-            $table->foreign(['category_id'], 'treatments_ibfk_1')->references(['id'])->on('categories')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

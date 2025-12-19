@@ -20,7 +20,13 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $supplier = Supplier::create($request->all());
+
+        if ($supplier) {
+            return response()->json($supplier, 201);
+        } else {
+            return response()->json(['message' => 'Failed to create supplier'], 500);
+        }
     }
 
     /**
@@ -36,7 +42,11 @@ class SupplierController extends Controller
      */
     public function update(Request $request, Supplier $supplier)
     {
-        //
+        if ($supplier->update($request->all())) {
+            return response()->json($supplier, 200);
+        } else {
+            return response()->json(['message' => 'Failed to update supplier'], 500);
+        }
     }
 
     /**

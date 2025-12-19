@@ -38,6 +38,8 @@ return new class extends Migration
             $table->integer('late_deduction')->default(20000);
             $table->string('bank_account', 20)->default('');
             $table->string('bank', 10)->default('');
+
+            $table->foreign('branch_id')->references('id')->on('branches')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

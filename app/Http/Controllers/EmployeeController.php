@@ -35,7 +35,7 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $employee = Employee::create($request->all());
-        
+
         if ($employee) {
             return response()->json($employee, 201);
         } else {
@@ -48,7 +48,7 @@ class EmployeeController extends Controller
      */
     public function show(string $id)
     {
-        return Employee::findOrFail($id);
+        return Employee::with('grade')->findOrFail($id);
     }
 
     /**

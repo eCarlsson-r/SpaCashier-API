@@ -18,7 +18,7 @@ class Employee extends Model
         'status',
         'identity_type',
         'identity_number',
-        'place_of_birth', 
+        'place_of_birth',
         'date_of_birth',
         'certified',
         'recruiter',
@@ -58,7 +58,7 @@ class Employee extends Model
 
     public function grade()
     {
-        return $this->hasMany(Grade::class);
+        return $this->hasOne(Grade::class)->latestOfMany();
     }
 
     public function attendance()
@@ -69,7 +69,7 @@ class Employee extends Model
     public static function getDailyReport($date, $branchId = null)
     {
         $startDate = date('Y-m-d', strtotime("last day of previous month", strtotime($date)));
-        
+
         $employees = self::query()
             ->with(['attendance' => function($query) use ($date) {
                 $query->where('date', $date)->with('shift');
@@ -112,9 +112,9 @@ class Employee extends Model
         return $employees->get()->map(function($employee) use ($date) {
             $attendance = $employee->attendance->first();
             $shift = $attendance ? $attendance->shift : null;
-            
+
             $clockIn = ($attendance && $attendance->shift_id != 'OFF') ? $attendance->clock_in : ($attendance && $attendance->shift_id == 'OFF' ? 'OFF' : null);
-            
+
             // Calculate Deduction
             $deduction = 0;
             if ($attendance && $shift && $shift->id != 'OFF' && $shift->id != 'L') {
@@ -122,11 +122,11 @@ class Employee extends Model
                 if ($attendance->clock_in) {
                     $shiftStart = Carbon::parse($date . ' ' . $shift->start_time);
                     $actualClockIn = Carbon::parse($date . ' ' . $attendance->clock_in);
-                    
+
                     if ($actualClockIn->gt($shiftStart)) {
                         $diffInMinutes = $actualClockIn->diffInMinutes($shiftStart);
                         $diffInHours = $actualClockIn->diffInHours($shiftStart);
-                        
+
                         if ($diffInHours > 1) { // > 1 hour (meaning 2 hours or more)
                              $deduction += 2 * $employee->late_deduction;
                         } elseif ($diffInHours > 0 || $diffInMinutes > 5) {
@@ -134,16 +134,16 @@ class Employee extends Model
                         }
                     }
                 }
-                
+
                 // "Late Out" / Penalty logic
                 if ($attendance->clock_out) {
                      $shiftEnd = Carbon::parse($date . ' ' . $shift->end_time);
                      $actualClockOut = Carbon::parse($date . ' ' . $attendance->clock_out);
-                     
+
                      // The SQL used SUBTIME(clock_out, end_time). If positive, it means clock_out > end_time.
                      if ($actualClockOut->gt($shiftEnd)) {
                          $diffInHours = $actualClockOut->diffInHours($shiftEnd);
-                         
+
                          if (($shift->id == 'M' || $shift->id == 'N') && $diffInHours >= 1) {
                              $deduction += $employee->late_deduction;
                          } elseif (($shift->id == 'A' || $shift->id == 'D') && $diffInHours > 1) {
@@ -152,7 +152,7 @@ class Employee extends Model
                      }
                 }
             }
-            
+
             // Absent Logic
             if ((!$attendance || !$attendance->clock_in) && Carbon::parse($date)->lte(Carbon::yesterday())) {
                  if ($attendance && $shift && $shift->id != 'OFF' && $shift->id != 'L') {
