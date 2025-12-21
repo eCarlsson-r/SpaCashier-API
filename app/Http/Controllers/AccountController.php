@@ -15,6 +15,17 @@ class AccountController extends Controller
         return Account::all();
     }
 
+    public function lookup(Request $request) {
+        $query = Account::query()->select('id', 'name', 'type', 'category');
+
+        // If a specific type is requested, filter the results
+        if ($request->has('type') && $request->type !== 'all') {
+            $query->where('type', $request->type);
+        }
+
+        return response()->json($query->orderBy('name')->get());
+    }
+
     /**
      * Store a newly created resource in storage.
      */
