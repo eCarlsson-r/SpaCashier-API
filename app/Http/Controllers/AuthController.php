@@ -22,7 +22,7 @@ class AuthController extends Controller
         if (auth()->attempt($credentials)) {
             $token = auth()->user()->createToken('pos-token')->plainTextToken;
             if ($employee) $user->employee = $employee;
-            return response()->json(['data' => $user, 'token' => $token], 200);
+            return response()->json(['data' => $user, 'token' => $token, 'type' => $user->type], 200);
         } else if (!$user) {
             return response()->json(['message' => 'No account exist with the given username.'], 401);
         } else if (!Hash::check($request->password, $user->password)) {

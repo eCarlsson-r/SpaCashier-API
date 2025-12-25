@@ -12,7 +12,23 @@ class WalkinController extends Controller
      */
     public function index()
     {
-        return Walkin::with('customer')->with('treatment')->where('session_id', '0')->get();
+        return Walkin::with(['customer', 'treatment'])
+        ->where('session_id', '0')
+        ->get()
+        ->map(function ($walkin) {
+            return [
+                // Frontend Select components work best with string values
+                'value' => $walkin->id,
+                'customer_id' => $walkin->customer_id,
+                'treatment_id' => $walkin->treatment_id,
+                // Format: "Aromatherapy Massage... atas nama Umum"
+                'label' => sprintf(
+                    '%s atas nama %s',
+                    $walkin->treatment->name ?? 'Unknown Treatment',
+                    $walkin->customer->name ?? 'Umum'
+                ),
+            ];
+        });
     }
 
     /**

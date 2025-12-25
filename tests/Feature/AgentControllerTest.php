@@ -40,6 +40,27 @@ class AgentControllerTest extends TestCase
             ]);
     }
 
+    public function test_store_creates_agent()
+    {
+        $agentData = Agent::factory()->make()->toArray();
+
+        $response = $this->postJson('/api/agent', $agentData);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('agents', ['name' => $agentData['name']]);
+    }
+
+    public function test_update_modifies_agent()
+    {
+        $agent = Agent::factory()->create();
+        $newName = 'Updated Agent Name';
+
+        $response = $this->putJson("/api/agent/{$agent->id}", ['name' => $newName]);
+
+        $response->assertStatus(200);
+        $this->assertEquals($newName, $agent->fresh()->name);
+    }
+
     public function test_destroy_deletes_agent()
     {
         $agent = Agent::factory()->create();

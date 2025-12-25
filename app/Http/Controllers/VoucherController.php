@@ -37,7 +37,7 @@ class VoucherController extends Controller
             if ($existingVouchers->count() > 0) {
                 return response()->json($existingVouchers, 200);
             } else {
-                $vouchers = collect();
+                $voucher = collect();
                 for ($i=$start; $i <= $end; $i++) {
                     $voucherCode = $treatment.sprintf('%06d', $i);
                     $voucher = Voucher::create([
@@ -46,9 +46,9 @@ class VoucherController extends Controller
                         "register_date" => $date,
                         "register_time" => $time,
                     ]);
-                    $vouchers->push($voucher);
+                    $voucher->push($voucher);
                 }
-                return response()->json($vouchers, 201);
+                return response()->json($voucher, 201);
             }
         } else {
             return response()->json([
@@ -66,22 +66,45 @@ class VoucherController extends Controller
             $quantity = $request->quantity;
             $voucherEnd = substr($id, 0, 4).sprintf('%06d', intval(substr($id, 4))+(intval($quantity)-1));
             return Voucher::select(
-                'vouchers.*', 
+                'voucher.*', 
                 'sales.income_id', 'sales.date AS sales_date', 
                 'sessions.id', 'sessions.date AS session_date',
                 'employees.name'
-            )->leftJoin('sales', 'sales.id', '=', 'vouchers.sales_id')
-            ->leftJoin('sessions', 'sessions.id', '=', 'vouchers.session_id')
+            )->leftJoin('sales', 'sales.id', '=', 'voucher.sales_id')
+            ->leftJoin('sessions', 'sessions.id', '=', 'voucher.session_id')
             ->leftJoin('employees', 'employees.id', '=', 'sessions.employee_id')
-            ->where("vouchers.id BETWEEN " . $id . " AND " . $voucherEnd)->get();
+            ->whereBetween("voucher.id", [$id, $voucherEnd])->get();
         } else {
-            return Voucher::select(
-                'voucher.amount', 'voucher.customer_id', 'voucher.id', 'sessions.date AS session_date', 
-                'voucher.purchase_date', 'voucher.register_date', 'voucher.register_time', 'employees.name',
-                'voucher.sales_id', 'incomes.journal_reference', 'voucher.session_id', 'voucher.treatment_id'
-            )->leftJoin('sales', 'sales.id', '=', 'voucher.sales_id')->leftJoin('sessions', 'sessions.id', '=', 'voucher.session_id')
-            ->leftJoin('incomes', 'incomes.id', '=', 'sales.income_id')->leftJoin('employees', 'employees.id', '=', 'sessions.employee_id')
-            ->where('voucher.id', $id)->first();
+            $voucher = Voucher::leftJoin('sales', 'sales.id', '=', 'voucher.sales_id')
+                ->leftJoin('sessions', 'sessions.id', '=', 'voucher.session_id')
+                ->leftJoin('incomes', 'incomes.id', '=', 'sales.income_id')
+                ->leftJoin('employees', 'employees.id', '=', 'sessions.employee_id')
+                ->select(
+                    'voucher.*', 
+                    'sessions.date AS session_date', 
+                    'incomes.journal_reference', 
+                    'employees.name AS therapist_name'
+                )
+                ->findOrFail($id);
+
+            if (!$voucher) return response()->json(['message' => 'Not found'], 404);
+
+            return [
+                'amount'        => $voucher->amount,
+                'id'            => $voucher->id,
+                'customer_id'   => $voucher->customer_id,
+                'treatment_id'  => $voucher->treatment_id,
+                'register_date' => $voucher->register_date,
+                'sales_info'    => ($voucher->sales_id > 0) 
+                    ? "Date : " . date('d-m-Y', strtotime($voucher->purchase_date)) . "\n" .
+                    "Income Reference : " . $voucher->journal_reference
+                    : "-------",
+                'usage_info'    => ($voucher->session_id > 0)
+                    ? "ID : " . $voucher->session_id . "\n" .
+                    "Date : " . date('d-m-Y', strtotime($voucher->session_date)) . "\n" .
+                    "Therapist : " . $voucher->therapist_name
+                    : "-------",
+            ];
         }
     }
 

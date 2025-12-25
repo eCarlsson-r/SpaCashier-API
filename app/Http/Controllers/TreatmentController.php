@@ -30,7 +30,13 @@ class TreatmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $treatment = Treatment::create($request->all());
+
+        if ($treatment) {
+            return response()->json($treatment, 201);
+        } else {
+            return response()->json(['message' => 'Failed to create treatment'], 500);
+        }
     }
 
     /**

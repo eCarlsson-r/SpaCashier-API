@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
+use App\Models\Journal;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
 class IncomeController extends Controller
@@ -51,7 +53,8 @@ class IncomeController extends Controller
             $journal->records()->create([
                 'account_id' => $item['account_id'],
                 'debit' => $item['amount'],
-                'credit' => 0
+                'credit' => 0,
+                'description' => $item['description'] ?? $request->description
             ]);
         }
 
@@ -59,7 +62,8 @@ class IncomeController extends Controller
             $journal->records()->create([
                 'account_id' => Wallet::find($payment['wallet_id'])->account_id,
                 'debit' => 0,
-                'credit' => $payment['amount']
+                'credit' => $payment['amount'],
+                'description' => $payment['description'] ?? $request->description
             ]);
         }
 

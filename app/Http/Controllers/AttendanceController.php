@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Attendance; 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\Employee;
+use App\Models\Shift;
+use App\Models\Grade;
 
 class AttendanceController extends Controller
 {
@@ -105,10 +108,7 @@ class AttendanceController extends Controller
         if (!($attendance->isEmpty())) {
             $employeeSchedule = array();
             foreach($attendance as $data) {
-                $currentGrade = $data->employee->grade->filter(function ($item) use ($data) {
-                    return $data->start_date <= $data->date && ($data->end_date >= $data->date || $data->end_date == NULL);
-                })->first();
-                $job_type = ($currentGrade->grade == 'K') ? 'cashier' : 'therapist';
+                $job_type = ($data->employee->grade->grade == 'K') ? 'cashier' : 'therapist';
                 $employee_key = $data->employee_id."-".$data->employee->complete_name."-".$job_type;
                 
                 if (isset($employeeSchedule[$employee_key])) {

@@ -11,22 +11,37 @@ class RoomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $rooms = Room::with(['branch', 'bed.session' => function ($query) {
             $query->where('status', 'ongoing');
         }])->get();
 
-        return $rooms->map(function ($room) {
-            $occupied_beds = $room->bed->filter(function ($bed) {
-                return $bed->session;
-            })->count();
+        if ($request->has('show') && $request->show == 'empty') {
+            return $rooms->map(function ($room) {
+                $empty_beds = $room->bed->filter(function ($bed) {
+                    // Ensure 'session' is not a collection. 
+                    // If a bed can have many sessions, use $bed->session->isEmpty()
+                    return $bed->session === null;
+                });
 
-            $room->occupied = $occupied_beds;
-            $room->empty = $room->bed->count() - $occupied_beds;
+                // Use setRelation to properly override the loaded beds
+                $room->setRelation('bed', $empty_beds->values()); 
 
-            return $room;
-        });
+                return $room;
+            });
+        } else {
+            return $rooms->map(function ($room) {
+                $occupied_beds = $room->bed->filter(function ($bed) {
+                    return $bed->session;
+                })->count();
+
+                $room->occupied = $occupied_beds;
+                $room->empty = $room->bed->count() - $occupied_beds;
+
+                return $room;
+            });
+        }
     }
 
     /**

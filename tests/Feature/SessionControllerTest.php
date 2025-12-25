@@ -22,16 +22,25 @@ class SessionControllerTest extends TestCase
         $this->authenticate();
     }
 
-    public function it_can_create_a_session()
+    public function test_it_can_create_a_session_via_api()
     {
-        $session = Session::factory()->create();
+        $treatment = Treatment::factory()->create();
+        $walkin = Walkin::factory()->create(['treatment_id' => $treatment->id]);
+        $sessionData = Session::factory()->make([
+            'treatment_id' => $treatment->id,
+        ])->toArray();
+        $sessionData['start'] = '2023-10-10T10:00:00'; // Match controller expectation
+        $sessionData['walkin_id'] = $walkin->id;
 
+        $response = $this->postJson('/api/session', $sessionData);
+
+        $response->assertStatus(201);
         $this->assertDatabaseHas('sessions', [
-            'id' => $session->id,
+            'customer_id' => $sessionData['customer_id'],
         ]);
     }
 
-    public function it_belongs_to_a_customer()
+    public function test_it_belongs_to_a_customer()
     {
         $customer = Customer::factory()->create();
         $session = Session::factory()->create(['customer_id' => $customer->id]);
@@ -39,7 +48,7 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->customer->is($customer));
     }
 
-    public function it_belongs_to_an_employee()
+    public function test_it_belongs_to_an_employee()
     {
         $employee = Employee::factory()->create();
         $session = Session::factory()->create(['employee_id' => $employee->id]);
@@ -47,7 +56,7 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->employee->is($employee));
     }
 
-    public function it_belongs_to_a_treatment()
+    public function test_it_belongs_to_a_treatment()
     {
         $treatment = Treatment::factory()->create();
         $session = Session::factory()->create(['treatment_id' => $treatment->id]);
@@ -55,7 +64,7 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->treatment->is($treatment));
     }
 
-    public function it_belongs_to_a_bed()
+    public function test_it_belongs_to_a_bed()
     {
         $bed = Bed::factory()->create();
         $session = Session::factory()->create(['bed_id' => $bed->id]);
@@ -63,7 +72,7 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->bed->is($bed));
     }
 
-    public function it_has_one_walkin()
+    public function test_it_has_one_walkin()
     {
         $session = Session::factory()->create();
         $walkin = Walkin::factory()->create(['session_id' => $session->id]);
@@ -71,11 +80,38 @@ class SessionControllerTest extends TestCase
         $this->assertTrue($session->walkin->is($walkin));
     }
 
-    public function it_has_one_voucher()
+    public function test_it_has_one_voucher()
     {
         $session = Session::factory()->create();
         $voucher = Voucher::factory()->create(['session_id' => $session->id]);
 
         $this->assertTrue($session->voucher->is($voucher));
+    }
+
+    public function test_it_can_start_a_session()
+    {
+        $session = Session::factory()->create(['status' => 'waiting']);
+        $response = $this->postJson("/api/session/{$session->id}/start");
+
+        $response->assertStatus(200);
+        $this->assertEquals('ongoing', $session->fresh()->status);
+    }
+
+    public function test_it_can_finish_a_session()
+    {
+        $session = Session::factory()->create(['status' => 'ongoing']);
+        $response = $this->postJson("/api/session/{$session->id}/finish");
+
+        $response->assertStatus(200);
+        $this->assertEquals('completed', $session->fresh()->status);
+    }
+
+    public function test_it_can_delete_a_session()
+    {
+        $session = Session::factory()->create();
+        $response = $this->deleteJson("/api/session/{$session->id}");
+
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('sessions', ['id' => $session->id]);
     }
 }

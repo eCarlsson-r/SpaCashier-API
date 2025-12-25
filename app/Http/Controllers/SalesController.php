@@ -8,6 +8,7 @@ use App\Models\Income;
 use App\Models\Journal;
 use App\Models\Voucher;
 use App\Models\Walkin;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
 class SalesController extends Controller
@@ -70,7 +71,7 @@ class SalesController extends Controller
      */
     public function update(Request $request, Sales $sales)
     {
-        $sales = Sales::find($request->id);
+        $sales = Sales::with('branch')->find($request->id);
         $incomeId = Income::whereYear('date', date("Y"))->orderBy("id", "desc")->first();
         if ($incomeId) $incomeId = $incomeId->id;
         $previousIncomeId = Income::whereYear('date', '<', date("Y"))->orderBy("id", "desc")->first();
@@ -106,11 +107,14 @@ class SalesController extends Controller
                 $end = (int)explode($record->treatment_id, $record->voucher_end)[1];
                 for ($i=$start; $i <= $end; $i++) {
                     $voucherCode = $record->treatment_id.sprintf('%06d', $i);
-                    $returnArr = updateDB(
-                        $connection, "`voucher`",
-                        ["voucher-sales"=>$sales->id, "voucher-customer"=>$sales->customer_id, "voucher-amount"=>$record->price],
-                        "`voucher-no`='$voucherCode'"
-                    );
+                    $voucher = Voucher::where("id", $voucherCode)->first();
+                    if ($voucher) {
+                        $voucher->update([
+                            "sales_id" => $sales->id,
+                            "customer_id" => $sales->customer_id,
+                            "amount" => $record->price
+                        ]);
+                    }
                 }
 
                 $journal->records()->create([
@@ -151,36 +155,39 @@ class SalesController extends Controller
             }
         } 
 
-        if ($request->payment_method == "cash") {
-            $income->payments()->create([
-                "wallet_id" => Branch::find($sales->branch_id)->cash_account,
-                "amount" => $sales->total, "type" => "cash",
-                "description" => "Uang Tunai"
-            ]);
-        } else if ($request->payment_method == "card") {
-            $income->payments()->create([
-                "wallet_id" => Wallet::where("name", "EDC ".$request->card_edc)->first()->id,
-                "amount" => $sales->total, "type" => "card",
-                "description" => "Kartu ".$request->card_type." dengan nomor ".$request->card_number
-            ]);
-        } else if ($request->payment_method == "ewallet") {
-            $income->payments()->create([
-                "wallet_id" => Wallet::where("name", "EDC ".$request->wallet_edc)->first()->id,
-                "amount" => $sales->total, "type" => "card",
-                "description" => "E-Wallet ".$request->wallet_edc." dengan nomor ".$request->mobile_number
-            ]);
-        } else if ($request->payment_method == "voucher") {
-            $income->payments()->create([
-                "wallet_id" => Wallet::where("name", "Voucher ".$request->voucher_provider)->first()->id,
-                "amount" => $sales->total, "type" => "card",
-                "description" => "Voucher ".$request->voucher_provider." dengan nomor ".$request->voucher_number
-            ]);
-        } else if ($request->payment_method == "qr") {
-            $income->payments()->create([
-                "wallet_id" => Wallet::where("name", "AIO : Kode QR ".$request->qr_edc)->first()->id,
-                "amount" => $sales->total, "type" => "card",
-                "description" => "Kode QR ".$request->qr_edc
-            ]);
+        foreach($request->payments as $payment) {
+            $paymentDetail = $payment["details"];
+            if ($payment["method"] == "cash") {
+                $income->payments()->create([
+                    "wallet_id" => Branch::find($sales->branch_id)->cash_account,
+                    "amount" => $sales->total, "type" => "cash",
+                    "description" => "Uang Tunai"
+                ]);
+            } else if ($payment["method"] == "card") {
+                $income->payments()->create([
+                    "wallet_id" => Wallet::where("name", "EDC ".$paymentDetail["card_edc"])->first()->id,
+                    "amount" => $sales->total, "type" => "card",
+                    "description" => "Kartu ".$paymentDetail["card_type"]." dengan nomor ".$paymentDetail["card_number"]
+                ]);
+            } else if ($payment["method"] == "ewallet") {
+                $income->payments()->create([
+                    "wallet_id" => Wallet::where("name", "EDC ".$paymentDetail["wallet_edc"])->first()->id,
+                    "amount" => $sales->total, "type" => "card",
+                    "description" => "E-Wallet ".$paymentDetail["wallet_edc"]." dengan nomor ".$paymentDetail["mobile_number"]
+                ]);
+            } else if ($payment["method"] == "voucher") {
+                $income->payments()->create([
+                    "wallet_id" => Wallet::where("name", "Voucher ".$paymentDetail["voucher_provider"])->first()->id,
+                    "amount" => $sales->total, "type" => "card",
+                    "description" => "Voucher ".$paymentDetail["voucher_provider"]." dengan nomor ".$paymentDetail["voucher_number"]
+                ]);
+            } else if ($payment["method"] == "qr") {
+                $income->payments()->create([
+                    "wallet_id" => Wallet::where("name", "AIO : Kode QR ".$paymentDetail["qr_edc"])->first()->id,
+                    "amount" => $sales->total, "type" => "card",
+                    "description" => "Kode QR ".$paymentDetail["qr_edc"]
+                ]);
+            }
         }
 
         if ($sales) {

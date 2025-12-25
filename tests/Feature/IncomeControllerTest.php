@@ -41,6 +41,47 @@ class IncomeControllerTest extends TestCase
             ]);
     }
 
+    public function test_store_creates_income()
+    {
+        $account = \App\Models\Account::factory()->create();
+        $wallet = \App\Models\Wallet::factory()->create(['account_id' => $account->id]);
+        
+        $incomeData = [
+            'date' => '2023-10-10',
+            'description' => 'Test Income',
+            'partner_type' => 'customer',
+            'partner_customer' => 'Test Customer',
+            'items' => [
+                ['account_id' => $account->id, 'type' => 'operational', 'transaction' => 'sales', 'amount' => 100, 'description' => 'Item description'],
+            ],
+            'payments' => [
+                ['wallet_id' => $wallet->id, 'type' => 'cash', 'amount' => 100, 'description' => 'Payment description'],
+            ],
+        ];
+
+        $response = $this->postJson('/api/income', $incomeData);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('incomes', ['description' => 'Test Income']);
+        $this->assertDatabaseHas('journals', ['description' => 'Test Income']);
+    }
+
+    public function test_update_modifies_income()
+    {
+        $income = Income::factory()->create();
+        $newDescription = 'Updated Income Description';
+
+        $response = $this->putJson("/api/income/{$income->id}", [
+            'date' => $income->date,
+            'description' => $newDescription,
+            'partner_type' => 'customer',
+            'partner_customer' => 'Updated Customer'
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertEquals($newDescription, $income->fresh()->description);
+    }
+
     public function test_income_has_items()
     {
         $income = Income::factory()->create();

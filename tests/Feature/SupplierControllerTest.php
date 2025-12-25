@@ -39,6 +39,27 @@ class SupplierControllerTest extends TestCase
             ]);
     }
 
+    public function test_store_creates_supplier()
+    {
+        $supplierData = \App\Models\Supplier::factory()->make()->toArray();
+
+        $response = $this->postJson('/api/supplier', $supplierData);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('suppliers', ['name' => $supplierData['name']]);
+    }
+
+    public function test_update_modifies_supplier()
+    {
+        $supplier = \App\Models\Supplier::factory()->create();
+        $newName = 'Updated Supplier Name';
+
+        $response = $this->putJson("/api/supplier/{$supplier->id}", ['name' => $newName]);
+
+        $response->assertStatus(200);
+        $this->assertEquals($newName, $supplier->fresh()->name);
+    }
+
     public function test_destroy_deletes_supplier()
     {
         $supplier = Supplier::factory()->create();

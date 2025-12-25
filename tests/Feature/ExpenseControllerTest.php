@@ -41,6 +41,47 @@ class ExpenseControllerTest extends TestCase
             ]);
     }
 
+    public function test_store_creates_expense()
+    {
+        $account = \App\Models\Account::factory()->create();
+        $wallet = \App\Models\Wallet::factory()->create(['account_id' => $account->id]);
+        
+        $expenseData = [
+            'date' => '2023-10-10',
+            'description' => 'Test Expense',
+            'partner_type' => 'supplier',
+            'partner_supplier' => 'Test Supplier',
+            'items' => [
+                ['account_id' => $account->id, 'amount' => 100, 'description' => 'Item description'],
+            ],
+            'payments' => [
+                ['wallet_id' => $wallet->id, 'type' => 'cash', 'amount' => 100, 'description' => 'Payment description'],
+            ],
+        ];
+
+        $response = $this->postJson('/api/expense', $expenseData);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('expenses', ['description' => 'Test Expense']);
+        $this->assertDatabaseHas('journals', ['description' => 'Test Expense']);
+    }
+
+    public function test_update_modifies_expense()
+    {
+        $expense = Expense::factory()->create();
+        $newDescription = 'Updated Expense Description';
+
+        $response = $this->putJson("/api/expense/{$expense->id}", [
+            'date' => $expense->date,
+            'description' => $newDescription,
+            'partner_type' => 'supplier',
+            'partner_supplier' => 'Updated Supplier'
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertEquals($newDescription, $expense->fresh()->description);
+    }
+
     public function test_expense_has_items()
     {
         $expense = Expense::factory()->create();

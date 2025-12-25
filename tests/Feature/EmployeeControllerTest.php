@@ -30,15 +30,36 @@ class EmployeeControllerTest extends TestCase
 
     public function test_show_returns_specific_employee()
     {
-        $employee = Employee::factory()->create();
+        $employee = \App\Models\Employee::factory()->create();
 
-        $response = $this->getJson(route('employee.show', $employee->id));
+        $response = $this->getJson("/api/employee/{$employee->id}");
 
         $response->assertStatus(200)
             ->assertJson([
                 'id' => $employee->id,
                 'name' => $employee->name,
             ]);
+    }
+
+    public function test_store_creates_employee()
+    {
+        $employeeData = \App\Models\Employee::factory()->make()->toArray();
+
+        $response = $this->postJson('/api/employee', $employeeData);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('employees', ['name' => $employeeData['name']]);
+    }
+
+    public function test_update_modifies_employee()
+    {
+        $employee = \App\Models\Employee::factory()->create();
+        $newName = 'Updated Employee Name';
+
+        $response = $this->putJson("/api/employee/{$employee->id}", ['name' => $newName]);
+
+        $response->assertStatus(200);
+        $this->assertEquals($newName, $employee->fresh()->name);
     }
 
     public function test_destroy_deletes_employee()

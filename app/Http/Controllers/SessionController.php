@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Session;
+use App\Models\Journal;
 use App\Models\Walkin;
 use App\Models\Voucher;
 use Illuminate\Http\Request;

@@ -128,14 +128,20 @@ npm run dev
 
 ## Testing
 
+The API is covered by a comprehensive test suite of **89 tests** (180+ assertions), including full CRUD testing for all major controllers. Tests wrap around actual API endpoints using Laravel Sanctum for authentication.
+
 ```bash
 # Run all tests
 composer test
 
 # Or manually
-php artisan config:clear
 php artisan test
 ```
+
+The test suite includes:
+- **Feature Tests**: Validating API endpoints, request validation, and database integrity.
+- **Unit Tests**: Verifying model relationships and business logic.
+- **CRUD Coverage**: Complete test coverage for `store`, `update`, `show`, and `destroy` across all core business entities.
 
 ## API Endpoints
 

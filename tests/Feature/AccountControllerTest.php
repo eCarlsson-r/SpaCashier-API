@@ -39,4 +39,37 @@ class AccountControllerTest extends TestCase
                 'name' => $account->name,
             ]);
     }
+
+    public function test_store_creates_account()
+    {
+        $accountData = Account::factory()->make()->toArray();
+
+        $response = $this->postJson('/api/account', $accountData);
+
+        $response->assertStatus(201)
+            ->assertJson(['name' => $accountData['name']]);
+        $this->assertDatabaseHas('accounts', ['name' => $accountData['name']]);
+    }
+
+    public function test_update_modifies_account()
+    {
+        $account = Account::factory()->create();
+        $newName = 'Updated Account Name';
+
+        $response = $this->putJson("/api/account/{$account->id}", ['name' => $newName]);
+
+        $response->assertStatus(200)
+            ->assertJson(['name' => $newName]);
+        $this->assertEquals($newName, $account->fresh()->name);
+    }
+
+    public function test_destroy_deletes_account()
+    {
+        $account = Account::factory()->create();
+
+        $response = $this->deleteJson("/api/account/{$account->id}");
+
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('accounts', ['id' => $account->id]);
+    }
 }

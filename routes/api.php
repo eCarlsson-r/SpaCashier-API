@@ -48,8 +48,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/daily', [DashboardController::class, 'daily']);
     Route::get('account/lookup', [AccountController::class, 'lookup']);
     Route::post('/files', [AuthController::class, 'upload']);
-Route::post('/session/{session}/start', [SessionController::class, 'start']);
-Route::post('/session/{session}/finish', [SessionController::class, 'finish']);
+    Route::post('/session/{session}/start', [SessionController::class, 'start']);
+    Route::post('/session/{session}/finish', [SessionController::class, 'finish']);
 
     Route::apiResource('journal', JournalController::class);
     Route::apiResource('journalrecord', JournalRecordController::class);
