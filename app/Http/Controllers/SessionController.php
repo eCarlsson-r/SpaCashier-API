@@ -137,8 +137,9 @@ class SessionController extends Controller
         }
         
         if ($session) {
-            //Employee::find($request->employee_id)->user->notify(new SessionMade($session));
-            //Customer::find($request->customer_id)->user->notify(new SessionMade($session));
+            Employee::find($request->employee_id)->user->notify(new SessionMade($session));
+            Customer::find($request->customer_id)->user->notify(new SessionMade($session));
+            User::find(1)->notify(new SessionMade($session));
             return response()->json($session, 201);
         } else {
             return response()->json(['message' => 'Failed to create session'], 500);

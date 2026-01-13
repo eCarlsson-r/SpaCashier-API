@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-pdo_mysql": "*",
         "laradevsbd/zkteco-sdk": "^1.0",
         "laravel-notification-channels/webpush": "^10.3",
         "laravel/framework": "^12.0",

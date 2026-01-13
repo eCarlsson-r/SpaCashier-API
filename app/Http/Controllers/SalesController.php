@@ -63,9 +63,10 @@ class SalesController extends Controller
 
         if ($sales) {
             Customer::find($request->customer_id)->user->notify(new SalesMade($sales));
+            User::find(1)->notify(new SalesMade($sales));
             return response()->json($sales, 201);
         } else {
-            return response()->json(['message' => 'Failed to create journal'], 500);
+            return response()->json(['message' => 'Failed to create sales'], 500);
         }
     }
 
